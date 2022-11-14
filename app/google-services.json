@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "421326828740",
+    "project_id": "thenu-app",
+    "storage_bucket": "thenu-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421326828740:android:70cca53e845d447d77c591",
+        "android_client_info": {
+          "package_name": "com.tantalum.thenuapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "421326828740-50g1u6agebvisjlvsmn4p5thvf6h0u52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-hKaYeuxX1cSGouINGVr_rqA3JR5EQMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "421326828740-50g1u6agebvisjlvsmn4p5thvf6h0u52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
