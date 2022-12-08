@@ -2,6 +2,7 @@ package com.tantalum.thenuapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -56,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
-                    tvFullName.setText("First Name : " + user.fullname);
-                    tvPhone.setText("Mobile : " + user.phone);
-                    tvEmail.setText("Email : " + user.email);
+                    tvFullName.setText("First Name : " + user.getFullName());
+                    tvPhone.setText("Mobile : " + user.getPhone());
+                    tvEmail.setText("Email : " + user.getEmail());
                 }
             }
 

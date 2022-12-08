@@ -11,35 +11,29 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+    EditText fullName, email, phone, password, conPassword;
+    Button registerBtn;
+    FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() !=null) {
-            finish();
-            return;
-        }
-
-        Button registerBtn = findViewById(R.id.registerBtn);
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                registerUser();
-            }
-        });
+        db = FirebaseFirestore.getInstance();
 
         TextView textViewSwitchToLogin = findViewById(R.id.tvSwitchToLogin);
         textViewSwitchToLogin.setOnClickListener(new View.OnClickListener() {
@@ -49,49 +43,55 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
-    }
 
-    private void registerUser() {
-        EditText fullName = findViewById(R.id.fullName);
-        EditText email = findViewById(R.id.email);
-        EditText phone = findViewById(R.id.phone);
-        EditText password = findViewById(R.id.password);
-        EditText conPassword = findViewById(R.id.conPassword);
+        fullName = findViewById(R.id.fullName);
+        email = findViewById(R.id.email);
+        phone = findViewById(R.id.phone);
+        password = findViewById(R.id.password);
+        conPassword = findViewById(R.id.conPassword);
+        registerBtn = findViewById(R.id.registerBtn);
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        String fullNameTxt = fullName.getText().toString();
-        String emailTxt = email.getText().toString();
-        String phoneTxt = phone.getText().toString();
-        String passwordTxt = password.getText().toString();
-        String conPasswordTxt = conPassword.getText().toString();
+                String fullNameTxt = fullName.getText().toString();
+                String emailTxt = email.getText().toString();
+                String phoneTxt = phone.getText().toString();
+                String passwordTxt = password.getText().toString();
+                String conPasswordTxt = conPassword.getText().toString();
 
-        //check if user fill all the fields before sending data to firebase
-        if (fullNameTxt.isEmpty() || emailTxt.isEmpty() || phoneTxt.isEmpty() || passwordTxt.isEmpty()){
-            Toast.makeText(this, "Please fill all the Fields !", Toast.LENGTH_LONG).show();
-            return;
-        }
+                Map<String,Object> user = new HashMap<>();
+                user.put("Full Name",fullNameTxt);
+                user.put("Email",emailTxt);
+                user.put("Phone",phoneTxt);
+                user.put("Password",passwordTxt);
+                user.put("Confirm Password",conPasswordTxt);
 
-        mAuth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                //check if user fill all the fields before sending data to firebase
+                if (fullNameTxt.isEmpty() || emailTxt.isEmpty() || phoneTxt.isEmpty() || passwordTxt.isEmpty()){
+                    Toast.makeText(this, "Please fill all the Fields !", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                db.collection("user")
+                        .add(user)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Toast.makeText(RegisterActivity.this,"Successful",Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            User user = new User(fullName, phone, email);
-                            FirebaseDatabase.getInstance().getReference("users")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    showMainActivity();
+                    public void onFailure(@NonNull @NotNull Exception e) {
 
-                                }
-                            });
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "Authentication Failed.",
-                                    Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterActivity.this,"Failed",Toast.LENGTH_SHORT).show();
 
-                        }
+
                     }
                 });
+
+            }
+        });
 
     }
     private void showMainActivity() {
