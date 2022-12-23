@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -53,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        TextView textViewSwitchToLogin = findViewById(R.id.tvSwitchToLogin);
+        Button textViewSwitchToLogin = findViewById(R.id.tvSwitchToLogin);
         textViewSwitchToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,26 +68,28 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        EditText fullName = findViewById(R.id.fullName);
-        EditText email = findViewById(R.id.email);
-        EditText phone = findViewById(R.id.phone);
-        EditText password = findViewById(R.id.password);
-        EditText conPassword = findViewById(R.id.conPassword);
+        TextInputLayout fullName = findViewById(R.id.fullName);
+        TextInputLayout email = findViewById(R.id.email);
+        TextInputLayout phone = findViewById(R.id.phone);
+        TextInputLayout password = findViewById(R.id.password);
+        TextInputLayout conPassword = findViewById(R.id.conPassword);
 
-        String fullNameTxt = fullName.getText().toString();
-        String emailTxt = email.getText().toString();
-        String phoneTxt = phone.getText().toString();
-        String passwordTxt = password.getText().toString();
-        String conPasswordTxt = conPassword.getText().toString();
+        EditText etFullName = fullName.getEditText();
+        EditText etEmail = email.getEditText();
+        EditText etPhone = phone.getEditText();
+        EditText etPassword = password.getEditText();
+        EditText etConPassword = conPassword.getEditText();
+
+        String fullNameTxt = fullName.getEditText().getText().toString();
+        String emailTxt = email.getEditText().getText().toString();
+        String phoneTxt = phone.getEditText().getText().toString();
+        String passwordTxt = password.getEditText().getText().toString();
+        String conPasswordTxt = conPassword.getEditText().getText().toString();
 
         //check if user fill all the fields before sending data to firebase
         if (fullNameTxt.isEmpty() || emailTxt.isEmpty() || phoneTxt.isEmpty() || passwordTxt.isEmpty()){
             Toast.makeText(this, "Please fill all the Fields !", Toast.LENGTH_LONG).show();
             return;
-        }
-
-        if (password.length() < 6) {
-            password.setError("Password must be below 6 characters");
         }
 
         mAuth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
