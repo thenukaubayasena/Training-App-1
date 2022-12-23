@@ -19,71 +19,74 @@
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         android:text="REGISTER HERE"/>
 
-    <EditText
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/fullName"
-        android:hint="Full Name"
-        android:textSize="20dp"
-        android:maxLines="1"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"/>
-
-    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
+        android:layout_marginHorizontal="20dp"
+        android:hint="Full Name">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:hint="Mobile"
-        android:textSize="20dp"
-        android:maxLines="1"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"/>
+        app:prefixText="+94">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email"
-        android:hint="Email"
-        android:textSize="20dp"
-        android:maxLines="1"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"/>
-
-    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
+        android:layout_marginHorizontal="20dp"
+        android:hint="Email">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/password"
-        android:hint="Password"
-        android:textSize="20dp"
-        android:maxLines="1"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"/>
-
-    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
+        android:layout_marginHorizontal="20dp"
+        android:hint="Password"
+        app:endIconMode="password_toggle"
+        app:errorEnabled="true"
+        app:helperText="Enter Strong Password"
+        app:helperTextEnabled="true"
+        app:helperTextTextColor="#4CAF50">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hapticFeedbackEnabled="true"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/conPassword"
-        android:hint="Confirm Password"
-        android:textSize="20dp"
-        android:maxLines="1"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        app:endIconMode="password_toggle"
+        android:hint="Confirm Password">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/registerBtn"
@@ -114,14 +117,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_marginStart="5dp"
+        <Button
             android:id="@+id/tvSwitchToLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Login Now"
-            android:textSize="16dp"
-            android:textStyle="bold"/>
+            style="@style/Widget.Material3.Button.TextButton"/>
     </LinearLayout>
 
 </LinearLayout>

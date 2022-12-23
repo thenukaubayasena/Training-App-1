@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        TextView registerNowBtn = findViewById(R.id.registerNowBtn);
+        Button registerNowBtn = findViewById(R.id.registerNowBtn);
         registerNowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,11 +50,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void authenticateUser() {
-        EditText loginEmail = findViewById(R.id.loginEmail);
-        EditText loginPassword = findViewById(R.id.loginPassword);
+        TextInputLayout loginEmail = findViewById(R.id.loginEmail);
+        TextInputLayout loginPassword = findViewById(R.id.loginPassword);
 
-        String email = loginEmail.getText().toString();
-        String password = loginPassword.getText().toString();
+        EditText etLoginEmail = loginEmail.getEditText();
+        EditText etLoginPassword = loginPassword.getEditText();
+
+        String email = loginEmail.getEditText().getText().toString();
+        String password = loginPassword.getEditText().getText().toString();
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all the Fields", Toast.LENGTH_LONG).show();
