@@ -88,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         //check if user fill all the fields before sending data to firebase
         if (fullNameTxt.isEmpty() || emailTxt.isEmpty() || phoneTxt.isEmpty() || passwordTxt.isEmpty()){
-            Toast.makeText(this, "Please fill all the Fields !", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please fill all the Fields.", Toast.LENGTH_LONG).show();
             return;
         }
 

@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
-                    tvFullName.setText("First Name : " + user.getFullName());
-                    tvPhone.setText("Mobile : " + user.getPhone());
-                    tvEmail.setText("Email : " + user.getEmail());
+                    tvFullName.setText("First Name: " + user.getFullName());
+                    tvPhone.setText("Mobile: " + user.getPhone());
+                    tvEmail.setText("Email: " + user.getEmail());
                 }
             }
 

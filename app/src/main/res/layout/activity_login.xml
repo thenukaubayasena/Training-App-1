@@ -80,6 +80,7 @@
             android:id="@+id/registerNowBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="Register Now"
             style="@style/Widget.Material3.Button.TextButton"/>
     </LinearLayout>
