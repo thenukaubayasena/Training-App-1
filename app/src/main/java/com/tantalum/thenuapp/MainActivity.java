@@ -1,5 +1,7 @@
 package com.tantalum.thenuapp;
 
+import static com.tantalum.thenuapp.FirebasePaths.USERS;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        firestore.collection("users").get()
+        firestore.collection(USERS).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

@@ -1,5 +1,7 @@
 package com.tantalum.thenuapp;
 
+import static com.tantalum.thenuapp.FirebasePaths.USERS;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -126,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         userID = mAuth.getCurrentUser().getUid();
-                        DocumentReference documentReference = mStore.collection("users").document(userID);
+                        DocumentReference documentReference = mStore.collection(USERS).document(userID);
                         User user = new User();
                         user.setFullName(fullNameTxt);
                         user.setEmail(emailTxt);
