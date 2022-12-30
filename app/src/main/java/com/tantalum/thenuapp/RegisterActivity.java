@@ -3,6 +3,7 @@ package com.tantalum.thenuapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -32,6 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mStore;
+    private ProgressDialog progressDialog;
 
     String userID;
 
@@ -65,9 +68,16 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
+
+        //loading dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.setCancelable(false);
     }
 
     private void registerUser() {
+        progressDialog.show();
+
         TextInputLayout fullName = findViewById(R.id.fullName);
         TextInputLayout email = findViewById(R.id.email);
         TextInputLayout phone = findViewById(R.id.phone);
@@ -91,40 +101,46 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Please fill all the Fields.", Toast.LENGTH_LONG).show();
             return;
         }
-        if (phoneTxt.length()<10) {
+        if (phoneTxt.length() < 9) {
             Toast.makeText(this, "Invalid Phone Number", Toast.LENGTH_LONG).show();
         }
 
-        if (emailTxt = "[a-zA-Z0-9._-]+@[a-z]+\.+[a-z]+") {
+        /*if (emailTxt = "[a-zA-Z0-9._-]+@[a-z]+\.+[a-z]+") {
             Toast.makeText(this, "Invalid Email Address", Toast.LENGTH_LONG).show();
-        }
+        }*/
 
 
         mAuth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        Toast.makeText(RegisterActivity.this, "User Created.",Toast.LENGTH_SHORT).show();
+                        userID = mAuth.getCurrentUser().getUid();
+                        DocumentReference documentReference = mStore.collection("users").document(userID);
+                        Map<String,Object> user = new HashMap<>();
+                        user.put("fullName",fullNameTxt);
+                        user.put("email",emailTxt);
+                        user.put("phone",phoneTxt);
+                        documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d("TAG", "onSuccess: user Profile is created for "+ userID);
+                            }
+                        });
+                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(RegisterActivity.this, "Authentication Failed: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                })
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "User Created.",Toast.LENGTH_SHORT).show();
-                            userID = mAuth.getCurrentUser().getUid();
-                            DocumentReference documentReference = mStore.collection("users").document(userID);
-                            Map<String,Object> user = new HashMap<>();
-                            user.put("fullName",fullNameTxt);
-                            user.put("email",emailTxt);
-                            user.put("phone",phoneTxt);
-                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    Log.d("TAG", "onSuccess: user Profile is created for "+ userID);
-                                }
-                            });
-                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
-
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "Authentication Failed.",
-                                    Toast.LENGTH_LONG).show();
-
-                        }
+                        progressDialog.dismiss();
                     }
                 });
 
