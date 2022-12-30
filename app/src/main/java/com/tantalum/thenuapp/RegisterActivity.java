@@ -6,14 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +19,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,10 +26,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
+    public static final String TAG = "RegisterActivity";
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mStore;
     private ProgressDialog progressDialog;
+
+    private EditText etFullName;
+    private EditText etEmail;
+    private EditText etPhone;
+    private EditText etPassword;
+    private EditText etConPassword;
 
     String userID;
 
@@ -56,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                registerUser();
+                validate();
             }
         });
 
@@ -75,64 +77,70 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
     }
 
-    private void registerUser() {
-        //progressDialog.show();
-
+    private void validate() {
         TextInputLayout fullName = findViewById(R.id.fullName);
         TextInputLayout email = findViewById(R.id.email);
         TextInputLayout phone = findViewById(R.id.phone);
         TextInputLayout password = findViewById(R.id.password);
         TextInputLayout conPassword = findViewById(R.id.conPassword);
 
-        EditText etFullName = fullName.getEditText();
-        EditText etEmail = email.getEditText();
-        EditText etPhone = phone.getEditText();
-        EditText etPassword = password.getEditText();
-        EditText etConPassword = conPassword.getEditText();
-
-        String fullNameTxt = etFullName.getText().toString();
-        String emailTxt = email.getEditText().getText().toString();
-        String phoneTxt = phone.getEditText().getText().toString();
-        String passwordTxt = password.getEditText().getText().toString();
-        String conPasswordTxt = conPassword.getEditText().getText().toString();
+        etFullName = fullName.getEditText();
+        etEmail = email.getEditText();
+        etPhone = phone.getEditText();
+        etPassword = password.getEditText();
+        etConPassword = conPassword.getEditText();
 
         //check if user fill all the fields before sending data to firebase
-        /*if (fullNameTxt.isEmpty() || emailTxt.isEmpty() || phoneTxt.isEmpty() || passwordTxt.isEmpty() || conPasswordTxt.isEmpty()){
-            Toast.makeText(this, "Please fill all the Fields.", Toast.LENGTH_LONG).show();
-            return;
-        }*/
         if (isValid(fullName, email, phone, password, conPassword)) {
-            if (phoneTxt.length() < 9) {
+            if (etPhone.getText().toString().trim().length() < 9) {
                 Toast.makeText(this, "Invalid Phone Number", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            if (!emailTxt.contains("@") && !emailTxt.contains(".")) {
+            String emailText = etEmail.getText().toString().trim();
+            if (!emailText.contains("@") && !emailText.contains(".")) {
                 Toast.makeText(this, "Invalid Email Address", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            if (!passwordTxt.equals(conPasswordTxt)) {
+            if (!etPassword.getText().toString().trim().equals(etConPassword.getText().toString().trim())) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            authenticate();
         }
+
+    }
+
+    private void authenticate() {
+        progressDialog.show();
+
+        String fullNameTxt = etFullName.getText().toString();
+        String emailTxt = etEmail.getText().toString();
+        String phoneTxt = etPhone.getText().toString();
+        String passwordTxt = etPassword.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        Toast.makeText(RegisterActivity.this, "User Created.",Toast.LENGTH_SHORT).show();
                         userID = mAuth.getCurrentUser().getUid();
                         DocumentReference documentReference = mStore.collection("users").document(userID);
-                        Map<String,Object> user = new HashMap<>();
-                        user.put("fullName",fullNameTxt);
-                        user.put("email",emailTxt);
-                        user.put("phone",phoneTxt);
+                        User user = new User();
+                        user.setFullName(fullNameTxt);
+                        user.setEmail(emailTxt);
+                        user.setPhone(phoneTxt);
                         documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                Log.d("TAG", "onSuccess: user Profile is created for "+ userID);
+                                Log.d(TAG, "onSuccess: user Profile is created for "+ userID);
+                                Toast.makeText(RegisterActivity.this, "User Created.",Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Failed: "+ e.getMessage());
                             }
                         });
                         startActivity(new Intent(getApplicationContext(),MainActivity.class));
@@ -151,7 +159,6 @@ public class RegisterActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                 });
-
     }
 
     private boolean isValid(TextInputLayout... textInputLayouts) {
