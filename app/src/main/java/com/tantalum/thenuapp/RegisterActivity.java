@@ -91,6 +91,14 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Please fill all the Fields.", Toast.LENGTH_LONG).show();
             return;
         }
+        if (phoneTxt.length()<10) {
+            Toast.makeText(this, "Invalid Phone Number", Toast.LENGTH_LONG).show();
+        }
+
+        if (emailTxt = "[a-zA-Z0-9._-]+@[a-z]+\.+[a-z]+") {
+            Toast.makeText(this, "Invalid Email Address", Toast.LENGTH_LONG).show();
+        }
+
 
         mAuth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -121,6 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
 
     }
+
     private void showMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
