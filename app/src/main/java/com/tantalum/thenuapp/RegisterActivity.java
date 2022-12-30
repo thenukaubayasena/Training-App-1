@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        progressDialog.show();
+        //progressDialog.show();
 
         TextInputLayout fullName = findViewById(R.id.fullName);
         TextInputLayout email = findViewById(R.id.email);
@@ -90,25 +90,33 @@ public class RegisterActivity extends AppCompatActivity {
         EditText etPassword = password.getEditText();
         EditText etConPassword = conPassword.getEditText();
 
-        String fullNameTxt = fullName.getEditText().getText().toString();
+        String fullNameTxt = etFullName.getText().toString();
         String emailTxt = email.getEditText().getText().toString();
         String phoneTxt = phone.getEditText().getText().toString();
         String passwordTxt = password.getEditText().getText().toString();
         String conPasswordTxt = conPassword.getEditText().getText().toString();
 
         //check if user fill all the fields before sending data to firebase
-        if (fullNameTxt.isEmpty() || emailTxt.isEmpty() || phoneTxt.isEmpty() || passwordTxt.isEmpty()){
+        /*if (fullNameTxt.isEmpty() || emailTxt.isEmpty() || phoneTxt.isEmpty() || passwordTxt.isEmpty() || conPasswordTxt.isEmpty()){
             Toast.makeText(this, "Please fill all the Fields.", Toast.LENGTH_LONG).show();
             return;
-        }
-        if (phoneTxt.length() < 9) {
-            Toast.makeText(this, "Invalid Phone Number", Toast.LENGTH_LONG).show();
-        }
-
-        /*if (emailTxt = "[a-zA-Z0-9._-]+@[a-z]+\.+[a-z]+") {
-            Toast.makeText(this, "Invalid Email Address", Toast.LENGTH_LONG).show();
         }*/
+        if (isValid(fullName, email, phone, password, conPassword)) {
+            if (phoneTxt.length() < 9) {
+                Toast.makeText(this, "Invalid Phone Number", Toast.LENGTH_LONG).show();
+                return;
+            }
 
+            if (!emailTxt.contains("@") && !emailTxt.contains(".")) {
+                Toast.makeText(this, "Invalid Email Address", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if (!passwordTxt.equals(conPasswordTxt)) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
 
         mAuth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -144,6 +152,17 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+
+    private boolean isValid(TextInputLayout... textInputLayouts) {
+        for (TextInputLayout til : textInputLayouts) {
+            String text = til.getEditText().getText().toString().trim();
+            if (text.isEmpty()) {
+                til.setError("Required");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void showMainActivity() {
