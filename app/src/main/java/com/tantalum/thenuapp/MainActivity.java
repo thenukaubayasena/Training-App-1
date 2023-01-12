@@ -1,5 +1,7 @@
 package com.tantalum.thenuapp;
 
+import static com.tantalum.thenuapp.FirebasePaths.USERS;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +21,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,24 +57,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference("users").child(currentUser.getUid());
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                if (user != null) {
-                    tvFullName.setText("First Name: " + user.getFullName());
-                    tvPhone.setText("Mobile: " + user.getPhone());
-                    tvEmail.setText("Email: " + user.getEmail());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        firestore.collection(USERS).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        int lastDocument = queryDocumentSnapshots.size() - 1;
+                        DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(lastDocument);
+                        User user = documentSnapshot.toObject(User.class);
+                        tvFullName.setText(user.getFullName());
+                        tvEmail.setText(user.getEmail());
+                        tvPhone.setText(user.getPhone());
+                    }
+                });
     }
 
     private void logoutUser() {
